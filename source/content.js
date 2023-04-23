@@ -4,17 +4,35 @@ document.documentElement.style.setProperty('--yt-spec-static-overlay-background-
 
 // Replace the current favicon with the new one
 var faviconLinks = document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]');
-// Remove each favicon link element
 faviconLinks.forEach(function (link) {
   link.parentNode.removeChild(link);
 });
 var newFavicon = document.createElement('link');
 newFavicon.rel = 'icon';
 newFavicon.type = 'image/png';
-newFavicon.href = "https://ibb.co/rGDrK8N"
+let currentUrl = window.location.href;
+if (currentUrl.startsWith("https://www.youtube.com")) {
+  newFavicon.href = "https://i.ibb.co/pQ0K1mJ/32ytlogo.png"
+}
+if (currentUrl.startsWith("https://music.youtube.com")) {
+  newFavicon.href = "https://i.ibb.co/VBgYGpx/Music-Logo32.png"
+}
 document.head.appendChild(newFavicon);
 
-
+if (currentUrl.startsWith("https://music.youtube.com")) {
+  let musicLogoElement = document.querySelector('.logo.style-scope');
+  musicLogoElement.src = 'https://svgshare.com/i/riK.svg';
+  let pictureElement = document.querySelector('.ytmusic-nav-bar picture');
+  let sourceElements = pictureElement.querySelectorAll('source');
+  // Loop through the source elements and set their srcset attributes
+  sourceElements.forEach(function (sourceElement) {
+    if (sourceElement.media == "(max-width: 615px)") {
+      sourceElement.srcset = "https://svgshare.com/i/riK.svg";
+    } else if (sourceElement.media == "(min-width: 616px)") {
+      sourceElement.srcset = "https://svgshare.com/i/riK.svg";
+    }
+  });
+}
 
 
 // Get the <style> element or create a new one if it doesn't exist
@@ -35,11 +53,23 @@ const cssRule1 = `
     background-color: purple !important;
   }
 `;
+const cssRule2 = `
+ ytmusic-subscribe-button-renderer[is-subscribed] {
+    --ytmusic-subscribe-button-color: rgba(255, 255, 255, 0.7);
+    --ytmusic-subscribe-button-outline-color: rgba(255, 255, 255, 0.2);
+  }
+`;
+const cssRule3 = `
+ ytmusic-subscribe-button-renderer {
+    --ytmusic-subscribe-button-color: #800080;
+    --ytmusic-subscribe-button-outline-color: #800080;
+  }
+`;
 // Add the CSS rule to the stylesheet
 styleEl.sheet.insertRule(cssRule, styleEl.sheet.cssRules.length);
 styleEl.sheet.insertRule(cssRule1, styleEl.sheet.cssRules.length);
-
-
+styleEl.sheet.insertRule(cssRule2, styleEl.sheet.cssRules.length);
+styleEl.sheet.insertRule(cssRule3, styleEl.sheet.cssRules.length);
 
 
 
@@ -59,6 +89,7 @@ const observer = new MutationObserver((mutationsList, observer) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         // Check if the node has a red background
         if (isRed(node)) {
+          //could be an issue setting background on svgs
           node.style.background = 'purple';
           node.setAttribute('fill', '#800080');
         }
@@ -69,6 +100,7 @@ const observer = new MutationObserver((mutationsList, observer) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         // Check if the node has a red background
         if (isRed(node)) {
+          //could be an issue setting background on svgs
           node.style.background = 'purple';
           node.setAttribute('fill', '#800080');
         }
@@ -90,11 +122,10 @@ function isRed(element) {
   let f = cs.getPropertyValue('fill')
   let reds = ['rgb(255, 0, 0)', 'rgba(255, 0, 0, 0)', 'red', '#F00', '#FF0000', '#ff0000', '#f00']
   if (reds.includes(f) || reds.includes(bgc)) {
-    console.log("working")
-
     return true
   }
-
   return false
-
 }
+
+
+document.querySelector("#items > ytmusic-responsive-list-item-renderer:nth-child(5) > ytmusic-custom-index-column-renderer > div > div > yt-icon > svg")
